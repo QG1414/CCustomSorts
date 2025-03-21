@@ -11,20 +11,19 @@ void printTab( int* pTab, int nSize );
 int createTab( int**, int );
 
 #define DEBUG_PRINT
+
 #define MAXLINE 10
+#define PARAMNUM 2
 
 int main( int argc, char* argv[] )
 {
-  //sprawdzic parametry
-  
-  if( argc != 2 )
+  if( argc != PARAMNUM )
   {
-    printf( "Usage: %s <array_length> ", argv[0] );
+    printf( "Usage: %s <array_length>\n", argv[0] );
     return 1;
   }
 
   int nSize = atoi( argv[1] );
-  //obliczyc rozmiar tablicy
 
   int* exTab = NULL;
   if( !createTab( &exTab, nSize ) )
@@ -34,30 +33,28 @@ int main( int argc, char* argv[] )
   }
 
   initTab( exTab, nSize );
-  //alokacja tablicy wzorcowej i jej zainicjowanie (funkje)
 
-  #ifdef DEBUG_PRINT
+#ifdef DEBUG_PRINT
 
+  printf( "Tablica nieposortowana\n" );
   printTab( exTab, nSize );
-  // wydruk na warunkowej kompil
 
-  #endif
-
-  //----------odczytac czasy poszczegolnych sortowan
+#endif
 
 
-
-  // alokacja pamieci na tabl do sortow
   pSortFuns pSortTab[] = { simpleInsertion, simpleSelection, bubbleSort };
   const char* sortNames[] = { "wstawianie", "wybieranie", "babelkowe" };
 
-  // obliczyc rozmiar tablicy adresoww funkcji
   int pSortSize = sizeof( pSortTab ) / sizeof( pSortFuns );
 
 
-  //TO W PETLI for
   int* desTab = NULL;
-  createTab( &desTab, nSize );
+  if( !createTab( &desTab, nSize ) )
+  {
+    printf( "Memory allocation error desTab can't be created\n" );
+    return 3;
+  }
+
   for( int i=0; i<pSortSize; i++ )
   {
     memcpy( desTab, exTab, sizeof( int ) * nSize );
@@ -66,23 +63,23 @@ int main( int argc, char* argv[] )
 
     pSortTab[i]( desTab, nSize );
 
-    printf( "%s time = %lf\n", sortNames[i], ( clock() - startTime ) / CLOCKS_PER_SEC );
+    printf( "sortowanie przy pomocy %s | czas = %lf\n", sortNames[i], (double)( clock() - startTime ) / CLOCKS_PER_SEC );
 
-    #ifdef DEBUG_PRINT
+#ifdef DEBUG_PRINT
 
+    printf( "Tablica posortowana %s\n", sortNames[i] );
     printTab( desTab, nSize );
 
-    #endif
+#endif
 
   }
-  // wkopiowanie do niej tabl wzorcowej
 
-  // -- odczytac czas  clock()
-  // -- posortowac
-  // -- odczytac czas i wypisac czas sortowania (wzor w helpach), wypisac nazwe srtowania
-  // -- na warunkowej kompilacji wydruk posortowanej
+#ifdef DEBUG_PRINT
 
-  // zwolnic pamiec
+  printf( "Tablica nieposortowana\n" );
+  printTab( exTab, nSize );
+
+#endif
 
   free( exTab );
   free( desTab );
@@ -112,7 +109,7 @@ int createTab( int** pTab, int nSize )
 {
   *pTab = (int*)malloc( nSize * sizeof( int ) );
 
-  if( !pTab ) return 0;
+  if( !*pTab ) return 0;
 
   memset( *pTab, 0, nSize * sizeof( int ) );
 

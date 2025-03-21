@@ -5,5 +5,4 @@ void simpleInsertion( int* pTab, int nSize );
 void simpleSelection( int* pTab, int nSize );
 void bubbleSort( int* pTab, int nSize );
 
-
 #endif
